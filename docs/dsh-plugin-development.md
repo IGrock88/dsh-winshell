@@ -106,12 +106,12 @@
 ## 三、踩坑清单（血泪）
 
 1. **`node_modules/@deepseek-ai` 必须是 junction（本机开发）**。DSH 的 Loader 走 Node 原生
-   解析，而插件真实路径在 profile 外面（`D:\WorkSpace\...`）：只有这个 junction 能让插件
+   解析，而插件真实路径在 profile 外面（`<checkout>\...`）：只有这个 junction 能让插件
    和宿主**共用同一份** `@deepseek-ai/*` 模块实例；否则会落回插件自带的副本（历史上曾因此
    停留在 0.1.0-rc.6，而宿主已经是 0.1.5）。⚠️ **npm install 会删掉这个 junction 并装一份新副本**
    （更早还曾反过来清空 junction 指向的 profile 依赖树）——依赖用 junction 时，插件项目里
    只跑 `npm install --package-lock-only`（只改 lock，不碰 node_modules）+ `npm pack --dry-run` 验证产物。
-   本机现状：`New-Item -ItemType Junction -Path W:\harness\default\dsh-winshell\node_modules\@deepseek-ai -Target $env:USERPROFILE\.dsh\profiles\node_modules\@deepseek-ai`。
+   本机现状：`New-Item -ItemType Junction -Path <checkout>\node_modules\@deepseek-ai -Target $env:USERPROFILE\.dsh\profiles\node_modules\@deepseek-ai`。
 2. **PowerShell 5.1 `Set-Content -Encoding UTF8` 写 BOM** → DSH 的 JSON.parse 崩溃
    （`Unexpected token '﻿'`）。改 profile package.json 必须无 BOM
    （`[System.IO.File]::WriteAllText($p, $json, (New-Object System.Text.UTF8Encoding($false)))`）。

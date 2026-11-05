@@ -7,7 +7,7 @@
 ## 环境
 
 - 本机运行的 DSH：`@deepseek-ai/dsh@0.1.5-rc.1`（`dsh web`，pnpm 全局安装；前端 `@deepseek-ai/dsh-web-frontend@0.1.5-rc.1`）。
-- 插件安装方式：junction `%USERPROFILE%\.dsh\profiles\web\node_modules\dsh-winshell` → `W:\harness\default\dsh-winshell`。
+- 插件安装方式：junction `%USERPROFILE%\.dsh\profiles\web\node_modules\dsh-winshell` → `<checkout>`。
 - 插件版本：0.3.15（本次适配后）。
 
 ## 症状
@@ -73,7 +73,7 @@ react, react/jsx-runtime, react-dom, react-dom/client,
 ## 复现/验证命令
 
 ```powershell
-cd W:\harness\default\dsh-winshell
+cd <checkout>
 node scripts/build-client.mjs          # 重建 bundle
 npm test                               # unit / apply / buffer / terminal / settle / e2e（走宿主的 0.1.5-rc.1 包）
 dsh --profile web --dump-config | Select-String dsh-winshell   # 组合树
@@ -209,9 +209,9 @@ Verified on 2026-10-16 against `second_brain` (Ubuntu 26.04.1, `wsl` backend):
 
 Machine-specific facts that shaped the design:
 
-- ssh config lives at **`/home/igor/.ssh/config` inside WSL** (hosts:
+- ssh config lives at **`~/.ssh/config` inside WSL** (hosts:
   `second_brain`, `singapore`, `vdsina_2g`), while
-  `C:\Users\igroc\.ssh\config` is a **0-byte file**. `ssh second_brain` therefore
+  `%USERPROFILE%\.ssh\config` is a **0-byte file**. `ssh second_brain` therefore
   resolves in WSL and fails from PowerShell with `Could not resolve hostname` —
   hence `sshShell` defaults to `wsl` independently of `defaultShell`.
 - The one-shot `shell` tool *can* run `ssh -o BatchMode=yes host '<cmd>'`, which is
